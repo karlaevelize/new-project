@@ -6,7 +6,8 @@ import {
   Post,
   Body,
   HttpCode,
-  NotFoundError
+  NotFoundError,
+  Authorized
 } from "routing-controllers";
 import Page from "./entity";
 
@@ -15,8 +16,8 @@ import Page from "./entity";
 @JsonController()
 export default class PageController {
   @Get("/pages/:id")
-  getPage(@Param("id") id: number): Page {
-    return Page[id];
+  getPage(@Param("id") id: number) {
+    return Page.findOne(id);
   }
 
   @Get("/pages")
@@ -25,6 +26,7 @@ export default class PageController {
     return { pages };
   }
 
+  @Authorized()
   @Post("/pages")
   @HttpCode(201)
   createPage(@Body() page: Page) {

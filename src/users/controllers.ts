@@ -5,16 +5,16 @@ import {
   Put,
   Post,
   Body,
-  HttpCode,
   NotFoundError
 } from "routing-controllers";
 import User from "./entity";
 
 @JsonController()
 export default class UserController {
+  static findOne: any;
   @Get("/users/:id")
-  getUser(@Param("id") id: number): User {
-    return User[id];
+  getUser(@Param("id") id: number) {
+    return User.findOne(id);
   }
 
   @Get("/users")
@@ -32,8 +32,16 @@ export default class UserController {
   }
 
   @Post("/users")
-  @HttpCode(201)
-  createPage(@Body() user: User) {
-    return user.save();
+  async createUser(@Body() user: User) {
+    const { password, ...rest } = user;
+    const entity = User.create(rest);
+    await entity.setPassword(password);
+    return entity.save();
   }
+
+  // @Post("/users")
+  // @HttpCode(201)
+  // createPage(@Body() user: User) {
+  //   return user.save();
+  // }
 }
